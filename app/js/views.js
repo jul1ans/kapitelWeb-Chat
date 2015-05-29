@@ -1,3 +1,5 @@
+var Backbone = require('backbone');
+
 class HomeView extends Backbone.View {
 
     initialize () {

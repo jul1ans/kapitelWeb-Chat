@@ -1,3 +1,5 @@
+var Backbone = require('backbone');
+
 import { HomeView as home, TestView as testview } from './views';
 
 class Router extends Backbone.Router {

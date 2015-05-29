@@ -9,7 +9,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/main.css': 'style/main.scss'
+          'app/dist/main.css': 'app/css/main.scss'
         }
       }
     },
@@ -19,8 +19,8 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['src/**/*.js'],
-        dest: 'dist/app.js'
+        src: ['app/js/libs/**/*.js', 'app/js/main.js'],
+        dest: 'app/dist/app.js'
       }
     },
 
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/myapp.min.js': ['dist/myapp.js']
+          'app/dist/myapp.min.js': ['app/dist/myapp.js']
         }
       }
     },
@@ -64,9 +64,13 @@ module.exports = function(grunt) {
         sourceMap: true
       },
       dist: {
-        files: {
-          'dist/myapp.js': 'dist/app.js'
-        }
+        files: [{
+          expand: true,
+          cwd: 'app',
+          src: ['js/**/*.js'],
+          dest: 'app/dist',
+          ext: '.js'
+        }]
       }
     },
 
@@ -158,6 +162,32 @@ module.exports = function(grunt) {
       no_dest: {
         src: 'dist/main.css' // globbing is also possible here 
       }
+    },
+
+    browserify: {
+      vendor: {
+        src: ['app/dist/js/**/*.js'],
+        dest: 'app/dist/main.js',
+        options: {
+          shim: {
+            jquery: {
+              path: 'app/js/libs/jquery.min.js',
+              exports: '$'
+            },
+            underscore: {
+              path: 'app/js/libs/underscore.min.js',
+              exports: '_'
+            },
+            backbone: {
+              path: 'app/js/libs/backbone.min.js',
+              exports: 'Backbone',
+              depends: {
+                underscore: 'underscore'
+              }
+            }
+          }
+        }
+      }
     }
   });
 
@@ -178,10 +208,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-reload');
   grunt.loadNpmTasks('grunt-autoprefixer');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['build', 'serve', 'watch']);
 
-  grunt.registerTask('build', ['concat', 'babel', 'uglify', 'sass', 'autoprefixer']);
+  grunt.registerTask('build', ['babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['nodemon', 'open:dev', 'reload']);
   grunt.registerTask('test',  ['mocha', 'mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco2']);
