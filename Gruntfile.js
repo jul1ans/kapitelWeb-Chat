@@ -2,6 +2,17 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    frontend: {
+      path:   'app/frontend',
+      dist:   'app/frontend/dist',
+      pub:    'app/frontend/public',
+      test:   'app/frontend/test', 
+    },
+    backend: {
+      path:   'app/backend',
+      dist:   'app/backend/dist',
+      test:   'app/backend/test'
+    },
 
     sass: {
       options: {
@@ -9,18 +20,8 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'app/dist/main.css': 'app/css/main.scss'
+          '<%= frontend.pub %>/main.css': 'app/css/main.scss'
         }
-      }
-    },
-
-    concat: {
-      options: {
-        separator: ';'
-      },
-      dist: {
-        src: ['app/js/libs/**/*.js', 'app/js/main.js'],
-        dest: 'app/dist/app.js'
       }
     },
 
@@ -30,7 +31,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'app/dist/myapp.min.js': ['app/dist/myapp.js']
+          '<%= frontend.pub %>/app.min.js': '<%= frontend.dist %>/main.js'
         }
       }
     },
@@ -55,8 +56,14 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint']
+      frontend: {
+        files: ['<%= frontend.test %>/test/**/*.js'],
+        tasks: ['jshint'/*, 'mocha'*/, 'reload']
+      },
+      backend: {
+        files: ['<%= backend.test %>/test/**/*.js'],
+        tasks: ['jshint'/*, 'mocha'*/]
+      }
     },
 
     babel: {
@@ -66,9 +73,16 @@ module.exports = function(grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: 'app',
+          cwd: '<%= frontend.path %>',
           src: ['js/**/*.js'],
-          dest: 'app/dist',
+          dest: '<%= frontend.dist %>',
+          ext: '.js'
+        },
+        {
+          expand: true,
+          cwd: '<%= backend.path %>',
+          src: ['js/**/*.js'],
+          dest: '<%= backend.dist %>',
           ext: '.js'
         }]
       }
@@ -156,37 +170,42 @@ module.exports = function(grunt) {
     },
 
     autoprefixer: {
-      options: {
-        // Task-specific options go here. 
-      },
       no_dest: {
-        src: 'dist/main.css' // globbing is also possible here 
+        src: '<%= frontend.pub %>/main.css' // globbing is also possible here 
       }
     },
 
     browserify: {
-      vendor: {
-        src: ['app/dist/js/**/*.js'],
-        dest: 'app/dist/main.js',
-        options: {
-          shim: {
-            jquery: {
-              path: 'app/js/libs/jquery.min.js',
-              exports: '$'
-            },
-            underscore: {
-              path: 'app/js/libs/underscore.min.js',
-              exports: '_'
-            },
-            backbone: {
-              path: 'app/js/libs/backbone.min.js',
-              exports: 'Backbone',
-              depends: {
-                underscore: 'underscore'
-              }
-            }
+      frontend: {
+        src: ['<%= frontend.dist %>/js/**/*.js'],
+        dest: '<%= frontend.dist %>/main.js'
+      },
+      backend: {
+        src: ['<%= backend.dist %>/js/**/*.js'],
+        dest: '<%= backend.dist %>/main.js'
+      }
+    },
+
+    concurrent: {
+      dev: ['nodemon', 'open:dev', 'watch']
+    },
+
+    docco: {
+      options: {
+        dst: './docs/annotated-source',
+        layout: 'parallel'
+      },
+      docs: {
+        files: [
+          {
+            expand: true,
+            cwd: '<%= frontend.path %>/js',
+            src: [
+              '**/*.js',
+              '!libs/**/*'
+            ]
           }
-        }
+        ]
       }
     }
   });
@@ -199,7 +218,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha');
@@ -209,13 +227,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-reload');
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-concurrent');
+  grunt.loadNpmTasks('grunt-docco2');
 
   grunt.registerTask('default', ['build', 'serve', 'watch']);
 
   grunt.registerTask('build', ['babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
-  grunt.registerTask('serve', ['nodemon', 'open:dev', 'reload']);
+  grunt.registerTask('serve', ['concurrent:dev']);
   grunt.registerTask('test',  ['mocha', 'mocha_istanbul:coverage']);
-  grunt.registerTask('doc',   ['docco2']);
+  grunt.registerTask('doc',   ['docco']);
   //grunt.registerTask('watch', ['jshint', 'watch']);
 
   grunt.registerTask('coveralls', ['mocha_istanbul:coveralls', 'istanbul_check_coverage']);
