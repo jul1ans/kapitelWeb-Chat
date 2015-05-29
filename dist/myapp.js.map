@@ -1,0 +1,1 @@
+{"version":3,"sources":["dist/app.js"],"names":[],"mappings":";;AAAA,IAAI,IAAI,GAAC,QAAQ,CAAC,CAAC;AACnB,IAAI,CAAC,GAAG,CAAC,CAAC;AACV,CAAC,IAAI,CAAC,GAAG,MAAM,CAAC;AAChB,OAAO,CAAC,GAAG,CAAC,CAAC,CAAC,CAAC","file":"dist/app.js","sourcesContent":["var test='jajaja';;\nlet a = 1;\n;var b = 123421;\nconsole.log(b);"]}
