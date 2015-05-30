@@ -199,7 +199,10 @@ module.exports = function(grunt) {
     },
 
     concurrent: {
-      dev: ['nodemon', 'open:dev', 'watch']
+      dev: ['nodemon', 'open:dev', 'watch'],
+      options: {
+        logConcurrentOutput: true
+      }
     },
 
     docco: {
