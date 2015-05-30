@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          '<%= frontend.pub %>/main.css': 'app/css/main.scss'
+          '<%= frontend.pub %>/main.css': '<%= frontend.path %>/css/main.scss'
         }
       }
     },
@@ -56,13 +56,21 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      frontend: {
-        files: ['<%= frontend.test %>/test/**/*.js'],
-        tasks: ['jshint'/*, 'mocha'*/, 'reload']
+      frontendScript: {
+        files: ['<%= frontend.path %>/js/**/*.js'],
+        tasks: ['build', 'jshint'/*, 'mocha'*/, 'reload']
       },
-      backend: {
+      frontendTest: {
+        files: ['<%= frontend.test %>/**/*.js'],
+        tasks: ['build', 'jshint'/*, 'mocha'*/]
+      },
+      backendScript: {
+        files: ['<%= backend.path %>/js/**/*.js', 'index.es6.js'],
+        tasks: ['build', 'jshint'/*, 'mocha'*/]
+      },
+      backendTest: {
         files: ['<%= backend.test %>/test/**/*.js'],
-        tasks: ['jshint'/*, 'mocha'*/]
+        tasks: ['build', 'jshint'/*, 'mocha'*/]
       }
     },
 
@@ -84,6 +92,10 @@ module.exports = function(grunt) {
           src: ['js/**/*.js'],
           dest: '<%= backend.dist %>',
           ext: '.js'
+        },
+        {
+          src: 'index.es6.js',
+          dest: 'index.js'
         }]
       }
     },

@@ -1,6 +1,10 @@
-node_modules
+/node_modules
 
-app/backend/dist/*
-app/frontend/dist/*
+/app/backend/dist/*
+/app/frontend/dist/*
+/app/frontend/public/*
 
-docs
+/docs
+
+/index.js
+/index.js.map

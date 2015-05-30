@@ -4,6 +4,7 @@ var $  					= require('jquery'),
 
 import Router from './router';
 
+// This is a test Application
 class Application {
 
     constructor () {
