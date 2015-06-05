@@ -1,15 +1,15 @@
 require("babel/polyfill");
 
 let express 	= require('express'),
-		router 		= express.Router()
+	router 		= express.Router()
 
 /*
  *	GET ROOMS
  *	get all rooms
  */
 router.get('/', (req, res) => {
-    let rooms = bindDatabase(req.db)
-    rooms.find().toArray((err, items) => {
+    let db = bindDatabase(req.db)
+    db.rooms.find().toArray((err, items) => {
         res.json(items)
     })
 })
@@ -19,8 +19,8 @@ router.get('/', (req, res) => {
  *	get user with given id
  */
 router.get('/:id', (req, res) => {
-    let rooms = bindDatabase(req.db)
-    rooms.findById(req.params.id, (err, items) => {
+    let db = bindDatabase(req.db)
+    db.rooms.findById(req.params.id, (err, items) => {
         res.json(items)
     })
 })
@@ -30,9 +30,9 @@ router.get('/:id', (req, res) => {
  *	create new user and return the created object
  */
 router.post('/', (req, res) => {
-    let rooms = bindDatabase(req.db)
+    let db = bindDatabase(req.db)
     let name = req.body.name || 'roomRandom'
-    rooms.insert({ name: name }, (err, result) => {
+    db.rooms.insert({ name: name }, (err, result) => {
     	if (err) { throw error }
     	res.json(result)
     })
@@ -43,9 +43,9 @@ router.post('/', (req, res) => {
  *	update user with given id
  */
 router.put('/:id', (req, res) => {
-    let rooms = bindDatabase(req.db)
+    let db = bindDatabase(req.db)
     let obj = filterByKey(req.body, 'name')
-    rooms.updateById(req.params.id, {$set: obj}, (err, result) => {
+    db.rooms.updateById(req.params.id, {$set: obj}, (err, result) => {
     	if (err) { throw error }
     	res.json(result)
     })
@@ -56,8 +56,8 @@ router.put('/:id', (req, res) => {
  *	remove user with given id
  */
 router.delete('/:id', (req, res) => {
-    let rooms = bindDatabase(req.db)
-    rooms.removeById(req.params.id, (err, result) => {
+    let db = bindDatabase(req.db)
+    db.rooms.removeById(req.params.id, (err, result) => {
     	if (err) { throw error }
     	res.json(result)
     })
@@ -77,7 +77,7 @@ let filterByKey = (obj, ...attr) => {
 
 let bindDatabase = (db) => {
 	db.bind('rooms')
-	return db.rooms
+	return db
 }
 
 module.exports = router
