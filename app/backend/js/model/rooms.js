@@ -1,57 +1,57 @@
-let { UserModel, mongoose }     = require('../config'),
+let { RoomModel, mongoose }     = require('../config'),
     { filterByKeys }            = require('./helper')
 
-class Users {
+class Rooms {
 
     constructor () {
         this.mongoose = mongoose
-        this.model = UserModel
+        this.model = RoomModel
     }
 
     all(cb) {
-        this.model.find((err, users) => {
+        this.model.find((err, rooms) => {
             if( typeof cb === 'function' ) {
-                cb(users)
+                cb(rooms)
             }
         })
     }
 
     one(id, cb) {
-        this.model.findById(id, (err, user) => {
+        this.model.findById(id, (err, room) => {
             if( typeof cb === 'function' ) {
-                cb(user)
+                cb(room)
             }
         })
     }
 
     create(opt, cb) {
-        opt = filterByKeys(opt, 'name', '_room')
-        let user = new this.model(opt)
-        user.save((err) => {
+        opt = filterByKeys(opt, 'name')
+        let room = new this.model(opt)
+        room.save((err) => {
             if ( typeof cb === 'function' ) {
-                cb(user)
+                cb(room)
             }
         })
     }
 
     update(id, opt, cb) {
         opt = filterByKeys(opt, 'name', '_room')
-        this.one(id, (user) => {
-            user.name = opt.name
-            user._room = opt._room
-            user.save((err) => {
+        this.one(id, (room) => {
+            room.name = opt.name
+            room._room = opt._room
+            room.save((err) => {
                 if ( typeof cb === 'function' ) {
-                    cb(user)
+                    cb(room)
                 }
             })
         })
     }
 
     delete(id, cb) {
-        this.one(id, (user) => {
-            user.remove((err) => {
+        this.one(id, (room) => {
+            room.remove((err) => {
                 if ( typeof cb === 'function' ) {
-                    cb(user)
+                    cb(room)
                 }
             })
         })
@@ -59,4 +59,4 @@ class Users {
 }
 
 
-module.exports = Users
+module.exports = Rooms

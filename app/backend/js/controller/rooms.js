@@ -1,83 +1,61 @@
-require("babel/polyfill");
+let express     = require('express'),
+    router      = express.Router()
 
-let express 	= require('express'),
-	router 		= express.Router()
+let Rooms       = require('../model/rooms')
 
 /*
- *	GET ROOMS
- *	get all rooms
+ *  GET USERS
+ *  get all rooms
  */
 router.get('/', (req, res) => {
-    let db = bindDatabase(req.db)
-    db.rooms.find().toArray((err, items) => {
-        res.json(items)
+    let rooms = new Rooms()
+    rooms.all((rooms) => {
+        res.json(rooms)
     })
 })
 
 /*
- *	GET ROOMS/ID
- *	get user with given id
+ *  GET USERS/ID
+ *  get user with given id
  */
 router.get('/:id', (req, res) => {
-    let db = bindDatabase(req.db)
-    db.rooms.findById(req.params.id, (err, items) => {
-        res.json(items)
+    let rooms = new Rooms()
+    rooms.one(req.params.id, (rooms) => {
+        res.json(rooms)
     })
 })
 
 /*
- *	POST ROOMS
- *	create new user and return the created object
+ *  POST USERS
+ *  create new user and return the created object
  */
 router.post('/', (req, res) => {
-    let db = bindDatabase(req.db)
-    let name = req.body.name || 'roomRandom'
-    db.rooms.insert({ name: name }, (err, result) => {
-    	if (err) { throw error }
-    	res.json(result)
+    let rooms = new Rooms()
+    rooms.create(req.body, (result) => {
+        res.json(result)
     })
 })
 
 /*
- *	UPDATE ROOMS/ID
- *	update user with given id
+ *  UPDATE USERS/ID
+ *  update user with given id
  */
 router.put('/:id', (req, res) => {
-    let db = bindDatabase(req.db)
-    let obj = filterByKey(req.body, 'name')
-    db.rooms.updateById(req.params.id, {$set: obj}, (err, result) => {
-    	if (err) { throw error }
-    	res.json(result)
+    let rooms = new Rooms()
+    rooms.update(req.params.id, req.body, (result) => {
+        res.json(result)
     })
 })
 
 /*
- *	DELETE ROOMS/ID
- *	remove user with given id
+ *  DELETE USERS/ID
+ *  remove user with given id
  */
 router.delete('/:id', (req, res) => {
-    let db = bindDatabase(req.db)
-    db.rooms.removeById(req.params.id, (err, result) => {
-    	if (err) { throw error }
-    	res.json(result)
+    let rooms = new Rooms()
+    rooms.delete(req.params.id, (result) => {
+        res.json(result)
     })
 })
-
-let filterByKey = (obj, ...attr) => {
-	let newObj = {}
-	for (let key of Object.keys(obj)) {
-		for (let a of attr) {
-			if(a === key) {
-				newObj[key] = obj[key]
-			}
-		}
-	}
-	return newObj
-}
-
-let bindDatabase = (db) => {
-	db.bind('rooms')
-	return db
-}
 
 module.exports = router
