@@ -37,8 +37,30 @@ module.exports = function(grunt) {
     },
 
     mocha: {
-      test: {
-        src: ['test/**/*.js']
+      backend: {
+        src: ['<%= backend.test %>/**/*.js']
+      },
+      frontend: {
+        src: ['<%= frontend.test %>/**/*.js']
+      }
+    },
+
+    simplemocha:{
+      backend:{
+        src:"<%= backend.dist %>/test.js",
+        options:{
+          reporter: 'spec',
+          slow: 200,
+          timeout: 1000
+        }
+      },
+      frontend:{
+        src:"<%= frontend.test %>/test.js",
+        options:{
+          reporter: 'spec',
+          slow: 200,
+          timeout: 1000
+        }
       }
     },
 
@@ -58,19 +80,19 @@ module.exports = function(grunt) {
     watch: {
       frontendScript: {
         files: ['<%= frontend.path %>/js/**/*.js'],
-        tasks: ['build', 'jshint'/*, 'mocha'*/, 'reload']
+        tasks: ['build', 'jshint', 'test', 'reload']
       },
       frontendTest: {
         files: ['<%= frontend.test %>/**/*.js'],
-        tasks: ['build', 'jshint'/*, 'mocha'*/]
+        tasks: ['build', 'jshint', 'test']
       },
       backendScript: {
         files: ['<%= backend.path %>/js/**/*.js', 'index.es6.js'],
-        tasks: ['build', 'jshint'/*, 'mocha'*/]
+        tasks: ['build', 'jshint', 'test']
       },
       backendTest: {
-        files: ['<%= backend.test %>/test/**/*.js'],
-        tasks: ['build', 'jshint'/*, 'mocha'*/]
+        files: ['<%= backend.test %>/**/*.js'],
+        tasks: ['build', 'jshint', 'test']
       }
     },
 
@@ -91,6 +113,20 @@ module.exports = function(grunt) {
           cwd: '<%= backend.path %>',
           src: ['js/**/*.js'],
           dest: '<%= backend.dist %>',
+          ext: '.js'
+        },
+        {
+          expand: true,
+          cwd: '<%= backend.test %>',
+          src: ['**/*.js'],
+          dest: '<%= backend.dist %>/test',
+          ext: '.js'
+        },
+        {
+          expand: true,
+          cwd: '<%= frontend.test %>',
+          src: ['**/*.js'],
+          dest: '<%= frontend.dist %>/test',
           ext: '.js'
         },
         {
@@ -195,6 +231,14 @@ module.exports = function(grunt) {
       backend: {
         src: ['<%= backend.dist %>/js/**/*.js'],
         dest: '<%= backend.dist %>/main.js'
+      },
+      frontendTest: {
+        src: ['<%= frontend.dist %>/test/**/*.js'],
+        dest: '<%= frontend.dist %>/test.js'
+      },
+      backendTest: {
+        src: '<%= backend.dist %>/test/**/*.js',
+        dest: '<%= backend.dist %>/test.js'
       }
     },
 
@@ -244,12 +288,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-docco2');
+  grunt.loadNpmTasks('grunt-simple-mocha');
 
   grunt.registerTask('default', ['build', 'serve', 'watch']);
 
   grunt.registerTask('build', ['babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['concurrent:dev']);
-  grunt.registerTask('test',  ['mocha', 'mocha_istanbul:coverage']);
+  grunt.registerTask('test',  ['simplemocha', 'mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco']);
   //grunt.registerTask('watch', ['jshint', 'watch']);
 

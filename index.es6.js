@@ -3,9 +3,6 @@ let express 		= require('express'),
 		http 				= require('http').Server(app),
 		bodyParser 	= require('body-parser')
 
-let mongo 			= require('mongoskin'),
-		db 					= mongo.db("mongodb://localhost:27017/es6chat", {native_parser:true})
-
 let users				= require('app/backend/dist/js/controller/users'),
 		rooms				= require('app/backend/dist/js/controller/rooms')
 
@@ -13,8 +10,6 @@ let users				= require('app/backend/dist/js/controller/users'),
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use((req,res,next) => {
-    req.db = db
-    req.oid = mongo.ObjectID
     next()
 })
 
