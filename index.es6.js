@@ -10,7 +10,7 @@ let users				= require('app/backend/dist/js/controller/users'),
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use((req,res,next) => {
-    next()
+  next()
 })
 
 app.use('/api/users', users)

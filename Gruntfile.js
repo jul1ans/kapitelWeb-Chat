@@ -38,10 +38,10 @@ module.exports = function(grunt) {
 
     mocha: {
       backend: {
-        src: ['<%= backend.test %>/**/*.js']
+        src: '<%= backend.dist %>/test.js'
       },
       frontend: {
-        src: ['<%= frontend.test %>/**/*.js']
+        src: '<%= frontend.dist %>/test.js'
       }
     },
 
@@ -49,9 +49,11 @@ module.exports = function(grunt) {
       backend:{
         src:"<%= backend.dist %>/test.js",
         options:{
-          reporter: 'spec',
-          slow: 200,
-          timeout: 1000
+          globals: ['window'],
+          timeout: 3000,
+          ignoreLeaks: false,
+          ui: 'bdd',
+          reporter: 'tap'
         }
       },
       frontend:{
@@ -231,14 +233,14 @@ module.exports = function(grunt) {
       backend: {
         src: ['<%= backend.dist %>/js/**/*.js'],
         dest: '<%= backend.dist %>/main.js'
-      },
-      frontendTest: {
-        src: ['<%= frontend.dist %>/test/**/*.js'],
-        dest: '<%= frontend.dist %>/test.js'
-      },
-      backendTest: {
-        src: '<%= backend.dist %>/test/**/*.js',
-        dest: '<%= backend.dist %>/test.js'
+      // },
+      // frontendTest: {
+      //   src: ['<%= frontend.dist %>/test/**/*.js'],
+      //   dest: '<%= frontend.dist %>/test.js'
+      // },
+      // backendTest: {
+      //   src: '<%= backend.dist %>/test/**/*.js',
+      //   dest: '<%= backend.dist %>/test.js'
       }
     },
 
@@ -266,6 +268,27 @@ module.exports = function(grunt) {
           }
         ]
       }
+    },
+
+    clean: ['<%= backend.dist %>', '<%= frontend.dist %>'],
+
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: false
+        },
+        src: ['<%= backend.dist %>/test.js']
+      }
+    },
+
+    mochacli: {
+      options: {
+        reporter: "nyan",
+        ui: "tdd"
+      },
+      all: ['<%= backend.dist %>/test/*.js']
     }
   });
 
@@ -277,9 +300,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks("grunt-mocha-cli");
   grunt.loadNpmTasks('grunt-mocha-istanbul');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-open');
@@ -292,9 +318,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['build', 'serve', 'watch']);
 
-  grunt.registerTask('build', ['babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
+  grunt.registerTask('build', ['clean', 'babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['concurrent:dev']);
-  grunt.registerTask('test',  ['simplemocha', 'mocha_istanbul:coverage']);
+  grunt.registerTask('test',  ['mochacli', 'mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco']);
   //grunt.registerTask('watch', ['jshint', 'watch']);
 

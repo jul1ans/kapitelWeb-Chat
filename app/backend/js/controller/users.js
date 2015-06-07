@@ -8,7 +8,7 @@ let Users       = require('../model/users')
  *	get all users
  */
 router.get('/', (req, res) => {
-    let users = new Users(req.db)
+    let users = new Users(req.config)
     users.all((users) => {
         res.json(users)
     })
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
  *	get user with given id
  */
 router.get('/:id', (req, res) => {
-    let users = new Users(req.db)
+    let users = new Users(req.config)
     users.one(req.params.id, (users) => {
         res.json(users)
     })
@@ -30,13 +30,8 @@ router.get('/:id', (req, res) => {
  *	create new user and return the created object
  */
 router.post('/', (req, res) => {
-    let name = req.body.name || 'chatclientRandom'
-    let room = {
-        $ref: 'room',
-        $id: req.body.room_id || null
-    }
-    let users = new Users(req.db)
-    users.create({ name: name, room: room }, (result) => {
+    let users = new Users(req.config)
+    users.create(req.body, (result) => {
         res.json(result)
     })
 })
@@ -46,7 +41,7 @@ router.post('/', (req, res) => {
  *	update user with given id
  */
 router.put('/:id', (req, res) => {
-    let users = new Users(req.db)
+    let users = new Users(req.config)
     users.update(req.params.id, req.body, (result) => {
         res.json(result)
     })
@@ -57,7 +52,7 @@ router.put('/:id', (req, res) => {
  *	remove user with given id
  */
 router.delete('/:id', (req, res) => {
-    let users = new Users(req.db)
+    let users = new Users(req.config)
     users.delete(req.params.id, (result) => {
         res.json(result)
     })

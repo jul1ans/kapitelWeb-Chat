@@ -1,18 +1,16 @@
 //require("babel/polyfill");
 
-let express 	= require('express'),
-	router 		= express.Router(),
-    { db }      = require('../config')
+let { UserModel }     = require('../config')
 
 
 class Users {
 
     constructor () {
-        this.db = db
+        this.model = UserModel
     }
 
     all(cb) {
-        this.db.find({}).toArray((err, users) => {
+        this.model.find((err, users) => {
             if( typeof cb === 'function' ) {
                 cb(users)
             }
@@ -20,7 +18,7 @@ class Users {
     }
 
     one(id, cb) {
-        this.db.findById(id, (err, user) => {
+        this.model.findById(id, (err, user) => {
             if( typeof cb === 'function' ) {
                 cb(user)
             }
@@ -28,30 +26,37 @@ class Users {
     }
 
     create(opt, cb) {
-        this.db.insert({ name: opt.name, room: opt.room }, (err, result) => {
-            if (err) { throw error }
+        let user = new this.model({
+            name: opt.name || `User${Date.now()}`,
+            room: opt.room
+        })
+        user.save((err) => {
             if ( typeof cb === 'function' ) {
-                cb(result)
+                cb(user)
             }
         })
     }
 
     update(id, opt, cb) {
-        opt = this.filterByKey(opt, 'name', 'room.$id')
-        this.db.updateById(id, {$set: opt}, (err, result) => {
-            if (err) { throw error }
-            if ( typeof cb === 'function' ) {
-                cb(result)
-            }
+        opt = this.filterByKey(opt, 'name', 'room')
+        this.one(id, (user) => {
+            user.name = opt.name
+            user.room = opt.room
+            user.save((err) => {
+                if ( typeof cb === 'function' ) {
+                    cb(user)
+                }
+            })
         })
     }
 
     delete(id, cb) {
-        this.db.removeById(id, (err, result) => {
-            if (err) { throw error }
-            if ( typeof cb === 'function' ) {
-                cb(result)
-            }
+        this.one(id, (user) => {
+            user.remove((err) => {
+                if ( typeof cb === 'function' ) {
+                    cb(user)
+                }
+            })
         })
     }
 
