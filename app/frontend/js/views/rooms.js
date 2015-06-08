@@ -20,6 +20,10 @@ class RoomsView extends Backbone.View {
     }, this)
     return this
   }
+
+  renderOne () {
+    console.log(this.collection)
+  }
 }
 
 export default RoomsView

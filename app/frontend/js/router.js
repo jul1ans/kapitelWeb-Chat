@@ -7,13 +7,15 @@ import RoomCollection from './collections/roomCollection'
 class Router extends Backbone.Router {
 
   constructor () {
-    let routes = {
+    super()
+  }
+
+  routes () {
+  	return {
       '': 'home',
-      'rooms': 'rooms'
+      'rooms': 			'rooms',
+      'rooms/:id': 	'room'
     }
-    super({
-    	routes: routes
-    })
   }
 
   home () {
@@ -29,6 +31,17 @@ class Router extends Backbone.Router {
     collection.fetch({
     	success: (rooms, res, opt) => {
     		view.render()
+    	}
+    })
+  }
+
+  room (id) {
+    console.log(`Route#rooms/${id} was called!`)
+    let collection = new RoomCollection(id)
+    let view = new RoomsView({ collection: collection })
+    collection.fetch({
+    	success: (rooms, res, opt) => {
+    		view.renderOne()
     	}
     })
   }
