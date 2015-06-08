@@ -1,29 +1,33 @@
-var Backbone = require('backbone');
+let Backbone 	= require('backbone'),
+		$					= require('jquery')
 
-import { HomeView as home, TestView as testview } from './views';
+import HomeView from './views/home'
+import ResourcesView from './views/resources'
 
 class Router extends Backbone.Router {
 
-    constructor () {
-        super();
-        this.routes = {
-            '': 'home',
-            'testview': 'testview'
-        };
+  constructor () {
+    let routes = {
+      '': 'home',
+      'resources': 'resources'
     }
+    super({
+    	routes: routes
+    })
+  }
 
-    home () {
-        console.log('Router#home was called!');
-        var view = new HomeView();
-        $('#app').html(view.render().$el);
-    }
+  home () {
+    console.log('Route#home was called!')
+    var view = new HomeView()
+    $('#app').html(view.render().$el)
+  }
 
-    testview () {
-        console.log('Router#testview was called!');
-        var view = new TestView();
-        $('#app').html(view.render().$el);
-    }
+  resources () {
+    console.log('Route#resources was called!')
+    var view = new ResourcesView()
+    $('#app').html(view.render().$el)
+  }
 
 }
 
-export default Router;
+export default Router
