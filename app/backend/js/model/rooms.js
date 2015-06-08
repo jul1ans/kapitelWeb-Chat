@@ -1,5 +1,7 @@
-let { RoomModel, UserModel, mongoose }     = require('../config'),
-    { filterByKeys }            = require('./helper')
+let {   RoomModel,
+        UserModel,
+        mongoose }     = require('../config'),
+    { filterByKeys }   = require('./helper')
 
 class Rooms {
 
@@ -10,26 +12,13 @@ class Rooms {
 
     all(cb) {
         this.model.find((err, rooms) => {
-            UserModel.find((err, users) => {
-                rooms = rooms.map((room) => {
-                    room.users = users.filter((user) => {
-                        return user._room === room._id.toString()
-                    })
-                    return room
-                })
-
-                if( typeof cb === 'function' ) {
-                    cb(rooms)
-                }
-            })
+            Rooms.joinWithUsers(rooms, cb)
         })
     }
 
     one(id, cb) {
         this.model.findById(id, (err, room) => {
-            if( typeof cb === 'function' ) {
-                cb(room)
-            }
+            Rooms.joinWithUsers(room, cb)
         })
     }
 
@@ -63,6 +52,32 @@ class Rooms {
                     cb(room)
                 }
             })
+        })
+    }
+
+    static joinWithUsers(rooms, cb) {
+        let isArray = Object.prototype.toString.call(rooms) === '[object Array]'
+        if(!isArray) {
+            rooms = [ rooms ]
+            isArray = false
+        }
+
+        UserModel.find((err, users) => {
+            rooms = rooms.map((room) => {
+                room.users = users.filter((user) => {
+                    return user._room === room._id.toString()
+                })
+                return room
+            })
+
+            if( typeof cb === 'function' ) {
+                if(isArray){
+                    cb(rooms)
+                }
+                else {
+                    cb(rooms[0])
+                }
+            }
         })
     }
 }
