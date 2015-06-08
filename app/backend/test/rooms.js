@@ -2,8 +2,10 @@ process.env.DB_URL = 'mongodb://localhost:27017/es6chat_test'
 
 import assert from 'assert'
 import Rooms  from '../js/model/rooms'
+import Users  from '../js/model/users'
 
 let rooms     = new Rooms()
+let users     = new Users()
 
 describe('Rooms', () => {
 	beforeEach((done) => {
@@ -54,6 +56,17 @@ describe('Rooms', () => {
         assert(dr.name, 'testRoom')
         rooms.all((rooms) => {
           assert.equal(rooms.length, 0)
+          done()
+        })
+      })
+    })
+  })
+
+  it('should contain user', (done) => {
+    rooms.create({name: 'testRoom'}, (room) => {
+      users.create({_room: room._id}, () => {
+        rooms.one(room._id, (r) => {
+          assert.equal(r.users.length, 1)
           done()
         })
       })
