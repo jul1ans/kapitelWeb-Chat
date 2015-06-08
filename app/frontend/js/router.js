@@ -2,14 +2,16 @@ let Backbone 	= require('backbone'),
 		$					= require('jquery')
 
 import HomeView from './views/home'
-import ResourcesView from './views/resources'
+import RoomsView from './views/rooms'
+
+import RoomCollection from './collections/roomCollection'
 
 class Router extends Backbone.Router {
 
   constructor () {
     let routes = {
       '': 'home',
-      'resources': 'resources'
+      'rooms': 'rooms'
     }
     super({
     	routes: routes
@@ -22,9 +24,9 @@ class Router extends Backbone.Router {
     $('#app').html(view.render().$el)
   }
 
-  resources () {
-    console.log('Route#resources was called!')
-    var view = new ResourcesView()
+  rooms () {
+    console.log('Route#rooms was called!')
+    var view = new RoomsView()
     $('#app').html(view.render().$el)
   }
 

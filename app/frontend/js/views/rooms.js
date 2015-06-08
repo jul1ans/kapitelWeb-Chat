@@ -2,10 +2,10 @@ let Backbone 	= require('backbone'),
 		_					= require('underscore'),
 		$					= require('jquery')
 
-class ResourcesView extends Backbone.View {
+class RoomsView extends Backbone.View {
 
   initialize () {
-    this.template = $('script[name="resources"]').html();
+    this.template = $('script[name="rooms"]').html();
   }
 
   render () {
@@ -14,4 +14,4 @@ class ResourcesView extends Backbone.View {
   }
 }
 
-export default ResourcesView
+export default RoomsView
