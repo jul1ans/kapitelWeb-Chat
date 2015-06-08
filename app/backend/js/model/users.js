@@ -28,6 +28,9 @@ class Users {
         opt = filterByKeys(opt, 'name', '_room')
         let user = new this.model(opt)
         user.save((err) => {
+            if(err){
+                throw err
+            }
             if ( typeof cb === 'function' ) {
                 cb(user)
             }

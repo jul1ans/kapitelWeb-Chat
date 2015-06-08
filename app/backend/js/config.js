@@ -6,12 +6,13 @@ mongoose 			= mongoose.connect(dburl)
 let { Schema } = mongoose
 
 let Room = new Schema({
-	name: { type: String, default: `Room${Date.now()}` }
+	name: { type: String, default: `Room${Date.now()}` },
+	users: { type: Array, default: [] }
 })
 
 let User = new Schema({
     name:  { type: String, default: `User${Date.now()}` },
-    _room: { type: Number, default: null }
+    _room: { type: String, default: null }
 })
 
 let UserModel = mongoose.model('User', User);

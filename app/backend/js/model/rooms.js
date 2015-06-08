@@ -1,4 +1,4 @@
-let { RoomModel, mongoose }     = require('../config'),
+let { RoomModel, UserModel, mongoose }     = require('../config'),
     { filterByKeys }            = require('./helper')
 
 class Rooms {
@@ -10,9 +10,18 @@ class Rooms {
 
     all(cb) {
         this.model.find((err, rooms) => {
-            if( typeof cb === 'function' ) {
-                cb(rooms)
-            }
+            UserModel.find((err, users) => {
+                rooms = rooms.map((room) => {
+                    room.users = users.filter((user) => {
+                        return user._room === room._id.toString()
+                    })
+                    return room
+                })
+
+                if( typeof cb === 'function' ) {
+                    cb(rooms)
+                }
+            })
         })
     }
 

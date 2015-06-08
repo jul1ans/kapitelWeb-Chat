@@ -11,11 +11,12 @@ class RoomsView extends Backbone.View {
   }
 
   render () {
-    this.collection.each(function(model){
+  	this.$el.html('')
+    this.collection.each((model) => {
       let profileTemplate = this.template(model.toJSON())
       this.$el.append(profileTemplate);
-    }, this);        
-    return this;
+    }, this)
+    return this
   }
 }
 
