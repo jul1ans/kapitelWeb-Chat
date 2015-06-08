@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chat</title>
+  <title>ES6-Chat</title>
 </head>
 <body>
+
+  <h1>ES6-Chat</h1>
 
   <div id="app"></div>
 
@@ -15,10 +17,13 @@
 	</script>
 
 	<script type="text/template" name="rooms">
-    <ul>
-      <li><%= name %></li>
-    </ul>
+    <h2>Rooms</h2>
+    <ul id='rooms'></ul>
 	</script>
+
+  <script type="text/template" name="rooms-item">
+    <li><%= name %> (<%= users.length %>)</li>
+  </script>
 
 </body>
 </html>
