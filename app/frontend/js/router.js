@@ -1,9 +1,7 @@
-let Backbone 	= require('backbone'),
-		$					= require('jquery')
-
-import HomeView from './views/home'
-import RoomsView from './views/rooms'
-
+import Backbone 			from 'backbone'
+import $							from 'jquery'
+import HomeView 			from './views/home'
+import RoomsView 			from './views/rooms'
 import RoomCollection from './collections/roomCollection'
 
 class Router extends Backbone.Router {

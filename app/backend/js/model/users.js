@@ -1,5 +1,8 @@
-let { UserModel, mongoose }     = require('../config'),
-    { filterByKeys }            = require('./helper')
+import {
+    UserModel,
+    mongoose
+} from '../config'
+import { filterByKeys } from './helper'
 
 class Users {
 
@@ -62,4 +65,4 @@ class Users {
 }
 
 
-module.exports = Users
+export default Users

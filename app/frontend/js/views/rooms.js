@@ -1,6 +1,6 @@
-let Backbone 	= require('backbone'),
-		_					= require('underscore'),
-		$					= require('jquery')
+import Backbone from 'backbone'
+import _				from 'underscore'
+import $				from 'jquery'
 
 class RoomsView extends Backbone.View {
 

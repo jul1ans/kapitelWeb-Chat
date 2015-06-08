@@ -1,5 +1,5 @@
-let Backbone 	= require('backbone'),
-		Room 			= require('../model/roomModel')
+import Backbone from 'backbone'
+import Room 		from '../model/roomModel'
 
 class RoomCollection extends Backbone.Collection {
 
@@ -7,7 +7,7 @@ class RoomCollection extends Backbone.Collection {
 		this.url = '/api/rooms'
 		this.model = Room
 	}
-	
+
 }
 
 export default RoomCollection

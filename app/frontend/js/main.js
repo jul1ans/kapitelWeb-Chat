@@ -1,7 +1,6 @@
-let Backbone 		= require('backbone'),
-		$  					= require('jquery')
-
-import Router from './router'
+import Backbone from 'backbone'
+import $				from 'jquery'
+import Router 	from './router'
 
 // This is a test Application
 class Application {
@@ -10,7 +9,7 @@ class Application {
     new Router()
     Backbone.history.start()
   }
-  
+
 }
 
 $(() => {

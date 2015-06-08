@@ -1,7 +1,9 @@
-let {   RoomModel,
-        UserModel,
-        mongoose }     = require('../config'),
-    { filterByKeys }   = require('./helper')
+import {
+    RoomModel,
+    UserModel,
+    mongoose
+} from '../config'
+import { filterByKeys } from './helper'
 
 class Rooms {
 
@@ -83,4 +85,4 @@ class Rooms {
 }
 
 
-module.exports = Rooms
+export default Rooms

@@ -1,7 +1,7 @@
 process.env.DB_URL = 'mongodb://localhost:27017/es6chat_test'
 
-let assert 	  = require('assert'),
-    Rooms     = require('../js/model/rooms')
+import assert from 'assert'
+import Rooms  from '../js/model/rooms'
 
 let rooms     = new Rooms()
 

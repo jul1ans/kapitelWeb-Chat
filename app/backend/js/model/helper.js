@@ -1,4 +1,4 @@
-require("babel/polyfill")
+require('babel/polyfill')
 
 let filterByKeys = (obj, ...attr) => {
     let newObj = {}
@@ -13,6 +13,6 @@ let filterByKeys = (obj, ...attr) => {
 }
 
 
-module.exports = {
+export default {
     filterByKeys: filterByKeys
 }

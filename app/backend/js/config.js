@@ -1,9 +1,10 @@
+import mongoose from 'mongoose'
+
 let dburl = process.env.DB_URL || 'mongodb://localhost:27017/es6chat'
 
-let mongoose 	= require('mongoose')
-mongoose 			= mongoose.connect(dburl)
+let mongo = mongoose.connect(dburl)
 
-let { Schema } = mongoose
+let { Schema } = mongo
 
 let Room = new Schema({
 	name: { type: String, default: `Room${Date.now()}` },
@@ -15,9 +16,11 @@ let User = new Schema({
     _room: { type: String, default: null }
 })
 
-let UserModel = mongoose.model('User', User);
-let RoomModel = mongoose.model('Room', Room);
+let UserModel = mongo.model('User', User);
+let RoomModel = mongo.model('Room', Room);
 
-exports.mongoose 	= mongoose
-exports.UserModel = UserModel
-exports.RoomModel = RoomModel
+export default {
+	mongoose: 	mongo,
+	UserModel,
+	RoomModel
+}

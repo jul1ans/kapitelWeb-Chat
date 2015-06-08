@@ -1,4 +1,4 @@
-let Backbone 	= require('backbone')
+import Backbone from 'backbone'
 
 class Room extends Backbone.Model {}
 

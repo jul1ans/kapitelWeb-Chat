@@ -1,7 +1,7 @@
-let express 	= require('express'),
-	router 		= express.Router()
+import express  from 'express'
+import Users    from '../model/users'
 
-let Users       = require('../model/users')
+let router = express.Router()
 
 /*
  *	GET USERS
@@ -58,4 +58,4 @@ router.delete('/:id', (req, res) => {
     })
 })
 
-module.exports = router
+export default router
