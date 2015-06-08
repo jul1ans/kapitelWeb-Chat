@@ -5,11 +5,16 @@ let Backbone 	= require('backbone'),
 class RoomsView extends Backbone.View {
 
   initialize () {
-    this.template = $('script[name="rooms"]').html();
+  	this.$el = $('#app')
+  	this.template = _.template($('script[name="rooms"]').html())
+  	this.collection.bind('reset', console.log)
   }
 
   render () {
-    this.$el.html(_.template(this.template));
+    this.collection.each(function(model){
+      let profileTemplate = this.template(model.toJSON())
+      this.$el.append(profileTemplate);
+    }, this);        
     return this;
   }
 }

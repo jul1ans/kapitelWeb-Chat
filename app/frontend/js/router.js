@@ -20,14 +20,19 @@ class Router extends Backbone.Router {
 
   home () {
     console.log('Route#home was called!')
-    var view = new HomeView()
+    let view = new HomeView()
     $('#app').html(view.render().$el)
   }
 
   rooms () {
     console.log('Route#rooms was called!')
-    var view = new RoomsView()
-    $('#app').html(view.render().$el)
+    let collection = new RoomCollection()
+    let view = new RoomsView({ collection: collection })
+    collection.fetch({
+    	success: (rooms, res, opt) => {
+    		view.render()
+    	}
+    })
   }
 
 }
