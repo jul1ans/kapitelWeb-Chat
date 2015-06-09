@@ -82,29 +82,29 @@ module.exports = function(grunt) {
     watch: {
       frontendScript: {
         files: ['<%= frontend.path %>/js/**/*.js'],
-        tasks: ['build', 'jshint', 'test', 'reload'],
+        tasks: ['build:frontend:script', 'jshint', 'test', 'reload'],
         options: {
           livereload: true
         }
       },
       frontendTest: {
         files: ['<%= frontend.test %>/**/*.js'],
-        tasks: ['build', 'jshint', 'test']
+        tasks: ['build:frontend:script', 'jshint', 'test']
       },
       backendScript: {
         files: ['<%= backend.path %>/js/**/*.js', 'index.es6.js'],
-        tasks: ['build', 'jshint', 'test'],
+        tasks: ['build:backend', 'jshint', 'test'],
         options: {
           livereload: true
         }
       },
       backendTest: {
         files: ['<%= backend.test %>/**/*.js'],
-        tasks: ['build', 'jshint', 'test']
+        tasks: ['build:backend', 'jshint', 'test']
       },
       frontendStyle: {
         files: ['<%= frontend.path %>/css/main.scss'],
-        tasks: ['sass', 'autoprefixer'],
+        tasks: ['build:frontend:style'],
         options: {
           livereload: true
         }
@@ -121,15 +121,8 @@ module.exports = function(grunt) {
       options: {
         sourceMap: true
       },
-      dist: {
+      backend: {
         files: [{
-          expand: true,
-          cwd: '<%= frontend.path %>',
-          src: ['js/**/*.js'],
-          dest: '<%= frontend.dist %>',
-          ext: '.js'
-        },
-        {
           expand: true,
           cwd: '<%= backend.path %>',
           src: ['js/**/*.js'],
@@ -144,15 +137,24 @@ module.exports = function(grunt) {
           ext: '.js'
         },
         {
+          src: 'index.es6.js',
+          dest: 'index.js'
+        }]
+      },
+      frontend: {
+        files: [{
+          expand: true,
+          cwd: '<%= frontend.path %>',
+          src: ['js/**/*.js'],
+          dest: '<%= frontend.dist %>',
+          ext: '.js'
+        },
+        {
           expand: true,
           cwd: '<%= frontend.test %>',
           src: ['**/*.js'],
           dest: '<%= frontend.dist %>/test',
           ext: '.js'
-        },
-        {
-          src: 'index.es6.js',
-          dest: 'index.js'
         }]
       }
     },
@@ -288,7 +290,10 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: ['<%= backend.dist %>', '<%= frontend.dist %>'],
+    clean: {
+      backend:  ['<%= backend.dist %>'],
+      frontend: ['<%= frontend.dist %>']
+    },
 
     mochaTest: {
       test: {
@@ -334,14 +339,24 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-docco2');
   grunt.loadNpmTasks('grunt-simple-mocha');
 
-  grunt.registerTask('default', ['build', 'serve', 'watch']);
 
+  // MAIN TASKS
+  grunt.registerTask('default', ['build', 'serve', 'watch']);
   grunt.registerTask('build', ['clean', 'babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['concurrent:dev']);
   grunt.registerTask('test',  ['mochacli', 'mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco']);
 
-  grunt.registerTask('coveralls', ['mocha_istanbul:coveralls', 'istanbul_check_coverage']);
-  grunt.registerTask('coverage', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
+  // FRONTEND BUILD TASKS
+  grunt.registerTask('build:frontend', ['build:frontend:script', 'build:frontend:style']);
+  grunt.registerTask('build:frontend:script', [
+    'clean:frontend', 'babel:frontend', 'browserify:frontend', 'uglify']);
+  grunt.registerTask('build:frontend:style', ['sass', 'autoprefixer']);
+
+  // BACKEND BUILD TASKS
+  grunt.registerTask('build:backend', ['clean:backend', 'babel:backend', 'browserify:backend']);
+
+  // grunt.registerTask('coveralls', ['mocha_istanbul:coveralls', 'istanbul_check_coverage']);
+  //grunt.registerTask('coverage', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
 
 };
