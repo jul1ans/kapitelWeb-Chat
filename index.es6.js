@@ -3,8 +3,8 @@ let express 		= require('express'),
 		http 				= require('http').Server(app),
 		bodyParser 	= require('body-parser')
 
-let users				= require('app/backend/dist/js/controller/users'),
-		rooms				= require('app/backend/dist/js/controller/rooms')
+let users				= require('./app/backend/dist/js/controller/users'),
+		rooms				= require('./app/backend/dist/js/controller/rooms')
 
 
 app.use(bodyParser.urlencoded({ extended: true }))
