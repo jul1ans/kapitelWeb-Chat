@@ -1,10 +1,12 @@
 let express 		= require('express'),
 		app 				= express(),
 		http 				= require('http').Server(app),
-		bodyParser 	= require('body-parser')
+		bodyParser 	= require('body-parser'),
+    socketio    = require('socket.io')
 
-let users				= require('app/backend/dist/js/controller/users'),
-		rooms				= require('app/backend/dist/js/controller/rooms')
+let users				= require('./app/backend/dist/js/controller/users'),
+		rooms				= require('./app/backend/dist/js/controller/rooms'),
+    messages    = require('./app/backend/dist/js/controller/messages')
 
 
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -15,6 +17,7 @@ app.use((req,res,next) => {
 
 app.use('/api/users', users)
 app.use('/api/rooms', rooms)
+app.use('/api/messages', messages)
 
 app.use(express.static(__dirname + '/app/frontend'))
 app.use('/doc', express.static(__dirname + '/docs/annotated-source'))
