@@ -2,7 +2,7 @@ import {
     RoomModel,
     UserModel,
     mongoose
-} from '../config'
+} from './../config'
 import { filterByKeys } from './helper'
 
 class Rooms {

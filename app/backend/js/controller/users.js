@@ -1,5 +1,5 @@
 import express  from 'express'
-import Users    from '../model/users'
+import Users    from './../model/users'
 
 let router = express.Router()
 
