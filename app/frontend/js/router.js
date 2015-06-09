@@ -1,7 +1,7 @@
 import Backbone 			from 'backbone'
 import $							from 'jquery'
-import HomeView 			from './views/home'
 import RoomsView 			from './views/rooms'
+import ChatView 			from './views/chat'
 import RoomCollection from './collections/roomCollection'
 
 class Router extends Backbone.Router {
@@ -12,9 +12,8 @@ class Router extends Backbone.Router {
 
   routes () {
   	return {
-      '': 'home',
-      'rooms': 			'rooms',
-      'rooms/:id': 	'room'
+      '': 		'rooms',
+      ':id': 	'chat'
     }
   }
 
@@ -35,13 +34,13 @@ class Router extends Backbone.Router {
     })
   }
 
-  room (id) {
+  chat (id) {
     console.log(`Route#rooms/${id} was called!`)
     let collection = new RoomCollection(id)
-    let view = new RoomsView({ collection: collection })
+    let view = new ChatView({ collection: collection })
     collection.fetch({
     	success: (rooms, res, opt) => {
-    		view.renderOne()
+    		view.render()
     	}
     })
   }
