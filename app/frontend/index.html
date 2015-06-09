@@ -2,28 +2,48 @@
 <html>
 <head>
   <title>ES6-Chat</title>
+  <link href="public/main.css" media="all" rel="stylesheet"/>
 </head>
 <body>
 
-  <h1>ES6-Chat</h1>
+  <h1 class="headline">ES6-Chat</h1>
 
-  <div id="app"></div>
+  <div id="app" class="container"></div>
 
   <script src="dist/main.js"></script>
   <script src="//localhost:35729/livereload.js"></script>
 
-  <script type="text/template" name="home">
-    <h1>Home</h1>
-    <a href="#rooms">Go to “Rooms”</a>
-	</script>
+
+  <!-- TEMPLATES -->
+
 
 	<script type="text/template" name="rooms">
-    <h2>Rooms</h2>
-    <ul id='rooms'></ul>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Rooms <a href='#' class='new'>+</a></h2>
+      </div>
+      <div id='rooms' class="panel-body"></div>
+    </div>
+    <div class="overlay">
+      <div class="modal">
+        <h2>Create New Room</h2>
+        <form class="newRoomForm" method="POST" action="/api/rooms">
+          <div class="form-input">
+            <input type="text" name="name" placeholder="Room Name" />
+            <input type="submit" value="Create" />
+            <a href="#" class="fake-button">Create</a>
+          </div>
+        </form>
+      </div>
+    </div>
 	</script>
 
   <script type="text/template" name="rooms-item">
-    <li><%= name %> (<%= users.length %>)</li>
+    <div class='row'>
+      <a href='#<%= _id %>'>
+        <%= name %> (<%= users.length %>)
+      </a>
+    </div>
   </script>
 
   <script type="text/template" name="chat">

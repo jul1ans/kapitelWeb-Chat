@@ -29,7 +29,7 @@ class Router extends Backbone.Router {
     let view = new RoomsView({ collection: collection })
     collection.fetch({
     	success: (rooms, res, opt) => {
-    		view.render()
+    		$('#app').html(view.render().el)
     	}
     })
   }
