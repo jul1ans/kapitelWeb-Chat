@@ -19,6 +19,7 @@ class RoomsView extends Backbone.View {
     return {
       'click .new':           'showModal',
       'click .overlay':       'hideModal',
+      'click .remove':        'removeRoom',
       'submit .newRoomForm':  'createNewRoom'
     }
   }
@@ -49,6 +50,17 @@ class RoomsView extends Backbone.View {
     $.post($elem.attr('action'), $elem.serializeArray(), (data) => {
       this.hideModal()
     }.bind(this))
+  }
+
+  removeRoom (e) {
+    e.preventDefault()
+    let $elem = $(e.currentTarget)
+    $.ajax({
+      url: $elem.attr('href'),
+      method: 'DELETE',
+    }).then(() => {
+      console.log('deleted')
+    })
   }
 }
 
