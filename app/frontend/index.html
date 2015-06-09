@@ -10,6 +10,7 @@
   <div id="app"></div>
 
   <script src="dist/main.js"></script>
+  <script src="//localhost:35729/livereload.js"></script>
 
   <script type="text/template" name="home">
     <h1>Home</h1>
@@ -23,6 +24,23 @@
 
   <script type="text/template" name="rooms-item">
     <li><%= name %> (<%= users.length %>)</li>
+  </script>
+
+  <script type="text/template" name="chat">
+    <div id='chat'>
+      <div id='chatfield'>
+        <div id='messages'></div>
+        <div id='write'>
+          <form id='write_form' method='POST' action='/write'>
+            <input name='message' />
+            <input type='submit' value='Send' />
+          </form>
+        </div>
+      </div>
+      <div id='userfield'>
+        <ul id='list'></ul>
+      </div>
+    </div>
   </script>
 
 </body>

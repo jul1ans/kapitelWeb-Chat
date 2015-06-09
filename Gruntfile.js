@@ -82,7 +82,10 @@ module.exports = function(grunt) {
     watch: {
       frontendScript: {
         files: ['<%= frontend.path %>/js/**/*.js'],
-        tasks: ['build', 'jshint', 'test', 'reload']
+        tasks: ['build', 'jshint', 'test', 'reload'],
+        options: {
+          livereload: true
+        }
       },
       frontendTest: {
         files: ['<%= frontend.test %>/**/*.js'],
@@ -90,11 +93,27 @@ module.exports = function(grunt) {
       },
       backendScript: {
         files: ['<%= backend.path %>/js/**/*.js', 'index.es6.js'],
-        tasks: ['build', 'jshint', 'test']
+        tasks: ['build', 'jshint', 'test'],
+        options: {
+          livereload: true
+        }
       },
       backendTest: {
         files: ['<%= backend.test %>/**/*.js'],
         tasks: ['build', 'jshint', 'test']
+      },
+      frontendStyle: {
+        files: ['<%= frontend.path %>/css/main.scss'],
+        tasks: ['sass', 'autoprefixer'],
+        options: {
+          livereload: true
+        }
+      },
+      templates: {
+        files: ['<%= frontend.path %>/**/*.html'],
+        options: {
+          livereload: true
+        }
       }
     },
 
@@ -206,8 +225,7 @@ module.exports = function(grunt) {
 
     open : {
       dev : {
-        path: 'http://localhost:3000/',
-        app: 'google-chrome'
+        path: 'http://localhost:3000/'
       }
     },
 
@@ -322,7 +340,6 @@ module.exports = function(grunt) {
   grunt.registerTask('serve', ['concurrent:dev']);
   grunt.registerTask('test',  ['mochacli', 'mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco']);
-  //grunt.registerTask('watch', ['jshint', 'watch']);
 
   grunt.registerTask('coveralls', ['mocha_istanbul:coveralls', 'istanbul_check_coverage']);
   grunt.registerTask('coverage', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
