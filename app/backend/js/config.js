@@ -13,7 +13,8 @@ let Room = new Schema({
 
 let User = new Schema({
     name:  { type: String, default: `User${Date.now()}` },
-    _room: { type: String, default: null }
+    _room: { type: String, default: null },
+    _socket: { type: String, default: null }
 })
 
 let UserModel = mongo.model('User', User);

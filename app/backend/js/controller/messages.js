@@ -1,13 +1,18 @@
-import express  from 'express'
+// import express  from 'express'
+// import socketio from 'socket.io'
 
-let router = express.Router()
+// let router = express.Router()
 
-/*
- *  GET MESSAGES
- *  get all messages
- */
-router.get('/', (req, res) => {
-    console.log("implement - return all messages")
-})
+// /*
+//  *  GET MESSAGES
+//  *  get all messages from room i
+//  */
 
-export default router
+// router.get('/:id', (req, res) => {
+//     // let rooms = new Rooms()
+//     // rooms.one(req.params.id, (rooms) => {
+//     //     res.json(rooms)
+//     // })
+// })
+
+// export default router

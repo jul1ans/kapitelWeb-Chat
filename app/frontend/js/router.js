@@ -1,20 +1,33 @@
 import Backbone 			from 'backbone'
 import $							from 'jquery'
-import HomeView 			from './views/home'
+import io             from 'socket.io-client'
 import RoomsView 			from './views/rooms'
+import ChatView 			from './views/chat'
 import RoomCollection from './collections/roomCollection'
 
 class Router extends Backbone.Router {
 
   constructor () {
     super()
+
+    // create new socket
+
+    this.socket = io()
+    this.socket.on('connect', (data) => {
+      console.log("connected with server")
+    })
+
+    this.socket.on('newUser', (obj) => {
+      this.user = {
+        id: obj.id
+      }
+    })
   }
 
   routes () {
   	return {
-      '': 'home',
-      'rooms': 			'rooms',
-      'rooms/:id': 	'room'
+      '': 		'rooms',
+      ':id': 	'chat'
     }
   }
 
@@ -29,19 +42,24 @@ class Router extends Backbone.Router {
     let collection = new RoomCollection()
     let view = new RoomsView({ collection: collection })
     collection.fetch({
-    	success: (rooms, res, opt) => {
-    		view.render()
-    	}
+      success: (rooms, res, opt) => {
+        $('#app').html(view.render().el)
+      }
     })
   }
 
-  room (id) {
+  chat (id) {
     console.log(`Route#rooms/${id} was called!`)
+
+    // add user to chatroom
+
+    this.socket.emit('addUserToChatroom', {id: id})
+
     let collection = new RoomCollection(id)
-    let view = new RoomsView({ collection: collection })
+    let view = new ChatView({ collection: collection })
     collection.fetch({
     	success: (rooms, res, opt) => {
-    		view.renderOne()
+    		view.render()
     	}
     })
   }

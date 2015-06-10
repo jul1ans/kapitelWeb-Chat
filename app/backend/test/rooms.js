@@ -1,8 +1,8 @@
 process.env.DB_URL = 'mongodb://localhost:27017/es6chat_test'
 
 import assert from 'assert'
-import Rooms  from '../js/model/rooms'
-import Users  from '../js/model/users'
+import Rooms  from './../js/model/rooms'
+import Users  from './../js/model/users'
 
 let rooms     = new Rooms()
 let users     = new Users()

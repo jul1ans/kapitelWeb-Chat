@@ -1,5 +1,5 @@
 import express  from 'express'
-import Rooms    from '../model/rooms'
+import Rooms    from './../model/rooms'
 
 let router = express.Router()
 
