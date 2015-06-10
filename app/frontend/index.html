@@ -39,12 +39,10 @@
 	</script>
 
   <script type="text/template" name="rooms-item">
-    <div class='row'>
-      <a href='#<%= _id %>'>
-        <%= name %> (<%= users.length %>)
-        <a class="remove float-right" href='/api/rooms/<%= _id %>'>delete</a>
-      </a>
-    </div>
+    <a href='#<%= _id %>'>
+      <%= name %> (<%= users.length %>)
+      <a class="remove float-right" data-id="<%= _id %>" href="#">delete</a>
+    </a>
   </script>
 
   <script type="text/template" name="chat">

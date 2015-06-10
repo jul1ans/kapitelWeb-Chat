@@ -1,8 +1,9 @@
 import Backbone 			from 'backbone'
 import $							from 'jquery'
-import RoomsView 			from './views/rooms'
+import RoomView 			from './views/rooms'
 import ChatView 			from './views/chat'
 import RoomCollection from './collections/roomCollection'
+import RoomModel      from './model/roomModel'
 
 class Router extends Backbone.Router {
 
@@ -26,9 +27,9 @@ class Router extends Backbone.Router {
   rooms () {
     console.log('Route#rooms was called!')
     let collection = new RoomCollection()
-    let view = new RoomsView({ collection: collection })
     collection.fetch({
     	success: (rooms, res, opt) => {
+        let view = new RoomView({ collection: collection })
     		$('#app').html(view.render().el)
     	}
     })

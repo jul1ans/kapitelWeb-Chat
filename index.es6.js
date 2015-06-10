@@ -8,6 +8,7 @@ let users				= require('./app/backend/dist/js/controller/users'),
 
 
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use((req,res,next) => {
   next()

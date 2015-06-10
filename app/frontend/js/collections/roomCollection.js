@@ -3,10 +3,12 @@ import Room 		from '../model/roomModel'
 
 class RoomCollection extends Backbone.Collection {
 
-	initialize (id) {
-		this.id = id
-		this.url = `/api/rooms/${this.id || ''}`
+	initialize () {
 		this.model = Room
+	}
+
+	url () {
+		return '/api/rooms'
 	}
 
 }
