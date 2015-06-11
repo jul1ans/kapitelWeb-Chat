@@ -31,4 +31,4 @@ grunt serve
 
 ## API
 
-visit the API Documentation in the [API.md](https://github.com/jul1ans/kapitelWeb-Chat/blob/master/README.md)
+visit the API Documentation in the [API.md](https://github.com/jul1ans/kapitelWeb-Chat/blob/master/API.md)
