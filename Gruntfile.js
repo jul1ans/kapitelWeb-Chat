@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         tasks: ['build:frontend:script', 'jshint', 'test']
       },
       backendScript: {
-        files: ['<%= backend.path %>/js/**/*.js', 'index.es6.js'],
+        files: ['<%= backend.path %>/js/**/*.js', 'index.js'],
         tasks: ['build:backend', 'jshint', 'test'],
         options: {
           livereload: true
@@ -137,8 +137,8 @@ module.exports = function(grunt) {
           ext: '.js'
         },
         {
-          src: 'index.es6.js',
-          dest: 'index.js'
+          src: 'index.js',
+          dest: 'app.js'
         }]
       },
       frontend: {
@@ -221,7 +221,7 @@ module.exports = function(grunt) {
 
     nodemon: {
       dev: {
-        script: 'index.js'
+        script: 'app.js'
       }
     },
 
@@ -279,12 +279,10 @@ module.exports = function(grunt) {
       docs: {
         files: [
           {
-            expand: true,
-            cwd: '<%= frontend.path %>/js',
-            src: [
-              '**/*.js',
-              '!libs/**/*'
-            ]
+            src: '<%= frontend.path %>/js/**/*.js'
+          },
+          {
+            src: 'index.js'
           }
         ]
       }

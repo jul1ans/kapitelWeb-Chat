@@ -1,11 +1,11 @@
-let express 		= require('express'),
-		app 				= express(),
-		http 				= require('http').Server(app),
-		bodyParser 	= require('body-parser'),
+let express     = require('express'),
+    app         = express(),
+    http        = require('http').Server(app),
+    bodyParser  = require('body-parser'),
     socketio    = require('socket.io')(http)
 
-let users				= require('./app/backend/dist/js/controller/users'),
-		rooms				= require('./app/backend/dist/js/controller/rooms'),
+let users       = require('./app/backend/dist/js/controller/users'),
+    rooms       = require('./app/backend/dist/js/controller/rooms'),
     messages    = require('./app/backend/dist/js/controller/messages')
 
 import Users    from './app/backend/dist/js/model/users'
