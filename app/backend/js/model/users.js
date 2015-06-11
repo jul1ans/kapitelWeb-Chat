@@ -28,7 +28,7 @@ class Users {
     }
 
     create(opt, cb) {
-        opt = filterByKeys(opt, 'name', '_room')
+        opt = filterByKeys(opt, 'name', '_room', '_socket')
         let user = new this.model(opt)
         user.save((err) => {
             if(err){
@@ -43,13 +43,15 @@ class Users {
     update(id, opt, cb) {
         opt = filterByKeys(opt, 'name', '_room')
         this.one(id, (user) => {
-            user.name = opt.name
-            user._room = opt._room
-            user.save((err) => {
-                if ( typeof cb === 'function' ) {
-                    cb(user)
-                }
-            })
+            if(user) {
+                user.name = opt.name || user.name
+                user._room = opt._room || user._room
+                user.save((err) => {
+                    if ( typeof cb === 'function' ) {
+                        cb(user)
+                    }
+                })
+            }
         })
     }
 
