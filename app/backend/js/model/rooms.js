@@ -66,9 +66,11 @@ class Rooms {
 
         UserModel.find((err, users) => {
             rooms = rooms.map((room) => {
-                room.users = users.filter((user) => {
-                    return user._room === room._id.toString()
-                })
+                if(room) {
+                    room.users = users.filter((user) => {
+                        return user._room === room._id.toString()
+                    })
+                }
                 return room
             })
 

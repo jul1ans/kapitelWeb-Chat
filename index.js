@@ -57,7 +57,38 @@ socketio.on('connection', (socket) => {
         sender: "General",
         text: `User ${user.name} connected`
       }, rooms)
+
       users.update(user.id, { _room: obj.id })
+      
+      rooms.one(obj.id, (room) => {
+        for(let i = 0, length = room.users.length; i < length; i++) {
+          socketio.to(room.users[i]._socket).emit("sendUserlist", room.users.map((item) => { return item["name"] }))
+        }
+      })
+
+      socket.on('getUserlist', () => {
+        rooms.one(obj.id, (room) => {
+          socket.emit("sendUserlist", room.users.map((item) => { return item["name"] }))
+        })
+      })
+  })
+
+  // remove user from chatroom
+
+  socket.on('removeUserFromChatroom', (room) => {
+    users.update(user.id, { _room: null }, () => {
+      rooms.one(room.id, (room) => {
+        if(room) {
+          for(let i = 0, length = room.users.length; i < length; i++) {
+            socketio.to(room.users[i]._socket).emit("sendUserlist", room.users.map((item) => { 
+              if(item["name"] !== user.name) {
+                return item["name"] 
+              }
+            }))
+          }
+        }
+      })
+    })
   })
 
   // broadcast message to room
