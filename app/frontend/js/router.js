@@ -11,6 +11,8 @@ class Router extends Backbone.Router {
   constructor () {
     super()
 
+    this.chatroom = null
+
     // create new socket
 
     this.socket = io()
@@ -18,9 +20,10 @@ class Router extends Backbone.Router {
       console.log("connected with server")
     })
 
-    this.socket.on('newUser', (obj) => {
+    this.socket.on('newConnection', (obj) => {
+      console.log(obj.users)
       this.user = {
-        id: obj.id
+        id: obj.user.id
       }
     })
   }
@@ -40,6 +43,12 @@ class Router extends Backbone.Router {
 
   rooms () {
     console.log('Route#rooms was called!')
+
+    // remove user from chatroom
+
+    this.socket.emit('removeUserFromChatroom', {id: this.chatroom})
+    this.chatroom = null
+
     let collection = new RoomCollection()
     collection.fetch({
     	success: (rooms, res, opt) => {
@@ -51,6 +60,9 @@ class Router extends Backbone.Router {
 
   chat (id) {
     console.log(`Route#rooms/${id} was called!`)
+
+    this.socket.emit('removeUserFromChatroom', {id: this.chatroom})
+    this.chatroom = id
 
     // add user to chatroom
 
@@ -98,10 +110,26 @@ class Router extends Backbone.Router {
           this.socket.emit('sendMessage', $('#messageText').val())
           $('#messageText').val('')
         })
+
+        // get userlist
+
+        this.socket.emit('getUserlist')
+        this.socket.on('sendUserlist', (users) => {
+          let $list = $('#userfield #list')
+          $list.html("")
+          for(let i = 0, length = users.length; i < length; i++) {
+            if (users[i] != null) {
+              $list.append(`
+                <li>
+                  ${users[i]}
+                </li>
+                `)
+            }
+          }
+        })
     	}
     })
   }
-
 }
 
 export default Router
