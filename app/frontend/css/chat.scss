@@ -11,3 +11,10 @@
 #write {
   margin-top: 30px;
 }
+
+#userfield #list {
+  li {
+    list-style-type: none;
+    display: inline;
+  }
+}

@@ -121,7 +121,7 @@ class Router extends Backbone.Router {
             if (users[i] != null) {
               $list.append(`
                 <li>
-                  ${users[i]}
+                  ${users[i]},
                 </li>
                 `)
             }
