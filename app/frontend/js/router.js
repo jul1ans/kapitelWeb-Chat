@@ -58,8 +58,33 @@ class Router extends Backbone.Router {
     let collection = new RoomCollection(id)
     let view = new ChatView({ collection: collection })
     collection.fetch({
-    	success: (rooms, res, opt) => {
-    		view.render()
+      success: (rooms, res, opt) => {
+        view.render()
+
+        let $messageContainer = $('#chat #messages')
+
+
+        // receive messages
+
+        this.socket.on('message', (message) => {
+          $messageContainer.append(`
+            <div>
+              <span class='sender'>
+                ${message.sender}:
+              </span>
+              <span class='text'>
+                ${message.text}
+              </span>
+            </div>
+
+            `)
+        })
+
+        // send message
+
+        $('#sendMessage').on('click', () => {
+          this.socket.emit('sendMessage', $('#messageText').val())
+        })
     	}
     })
   }

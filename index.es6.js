@@ -9,6 +9,7 @@ let users				= require('./app/backend/dist/js/controller/users'),
     messages    = require('./app/backend/dist/js/controller/messages')
 
 import Users    from './app/backend/dist/js/model/users'
+import Rooms    from './app/backend/dist/js/model/rooms'
 
 
 
@@ -31,6 +32,8 @@ socketio.on('connection', (socket) => {
   // create new user
 
   let users = new Users()
+  let rooms = new Rooms()
+
   let user = {}
   users.create({_socket: socket.id}, (result) => {
       socket.emit('newUser', {id: result.id})
@@ -43,28 +46,40 @@ socketio.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected')
     // todo: implement delete function
+    users.delete(user.id)
   })
 
   // add user to chatroom
 
   socket.on('addUserToChatroom', (obj) => {
-    sendMessageToRoom(obj.id, {
-      sender: "General",
-      text: `User ${user.name} connected`
-    })
-    users.update(user.id, { _room: obj.id })
+      sendMessageToRoom(obj.id, {
+        sender: "General",
+        text: `User ${user.name} connected`
+      }, rooms)
+      users.update(user.id, { _room: obj.id })
   })
+
+  // broadcast message to room
+
+  socket.on('sendMessage', (text) => {
+      users.one(user.id, (dbUser) => {
+        sendMessageToRoom(dbUser._room, {
+          sender: dbUser.name,
+          text: text
+        }, rooms)
+      })
+  })
+
 })
 
 http.listen(3000, () => {
     console.log('listening on *:3000')
 })
 
-function sendMessageToRoom (roomId, message) {
-  console.log(`New message to room: ${message.text}`)
-  /*
-  todo:
-  find all users with _room == roomId
-  send message to users
-  */
+function sendMessageToRoom (roomId, message, rooms) {
+  rooms.one(roomId, (room) => {
+    for(let i = 0, length = room.users.length; i < length; i++) {
+      socketio.to(room.users[i]._socket).emit('message', message)
+    }
+  })
 }
