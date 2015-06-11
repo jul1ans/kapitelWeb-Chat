@@ -79,12 +79,24 @@ class Router extends Backbone.Router {
             </div>
 
             `)
+
+          $messageContainer.animate({
+            scrollTop: $messageContainer.height()
+          })
         })
 
         // send message
 
+        $('#messageText').keypress(function(event) {
+            if (event.which == 13) {
+              event.preventDefault();
+              $('#sendMessage').trigger('click')
+            }
+        });
+
         $('#sendMessage').on('click', () => {
           this.socket.emit('sendMessage', $('#messageText').val())
+          $('#messageText').val('')
         })
     	}
     })
