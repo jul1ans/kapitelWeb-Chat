@@ -36,7 +36,7 @@ socketio.on('connection', (socket) => {
   let rooms = new Rooms()
 
   let user = {}
-  users.create({_socket: socket.id, name: `User${Math.floor((Math.random() * 10000) + 1000)}`}, (result) => {
+  users.create({_socket: socket.id, name: `User${Date.now()%10000}` }, (result) => {
       socket.emit('newUser', {id: result.id})
       user.id = result.id
       user.name = result.name
@@ -51,7 +51,6 @@ socketio.on('connection', (socket) => {
   })
 
   // add user to chatroom
-
   socket.on('addUserToChatroom', (obj) => {
       sendMessageToRoom(obj.id, {
         sender: "General",
@@ -68,7 +67,7 @@ socketio.on('connection', (socket) => {
 
       socket.on('getUserlist', () => {
         rooms.one(obj.id, (room) => {
-          socket.emit("sendUserlist", room.users.map((item) => { return item["name"] }))
+          socket.emit("sendUserlist", room.users.map((item) => item.name ))
         })
       })
   })

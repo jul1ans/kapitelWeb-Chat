@@ -1,26 +1,31 @@
 import Backbone     from 'backbone'
-import _				    from 'underscore'
-import $				    from 'jquery'
+import _            from 'underscore'
+import $            from 'jquery'
 import RoomItemView from './room-item'
 
+// class to render rooms and handle the events
 class RoomView extends Backbone.View {
 
   initialize () {
+    // id of the container of the rooms
     this.list = '#rooms'
   	this.template	= _.template($('script[name="rooms"]').html())
 
-  	this.collection.bind("reset", this.render, this)
+    // this event is triggert on this.collection.create(model)
     this.collection.bind("add", (room) => {
       $(this.list).append(new RoomItemView({model:room}).render().el)
     }.bind(this))
+
+    // render all again if collection has changed
     this.collection.bind("change", this.render, this)
-    this.collection.bind("destroy", this.close, this)
   }
 
+  // The classname of the wrapper of the room list
   className () {
     return 'roomlist'
   }
 
+  // return all event on the room list view
   events () {
     return {
       'click .new':           'showModal',
@@ -30,6 +35,7 @@ class RoomView extends Backbone.View {
     }
   }
 
+  // render all
   render () {
   	this.$el.html(this.template)
     _.each(this.collection.models, (room) => {
