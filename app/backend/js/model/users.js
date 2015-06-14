@@ -44,8 +44,8 @@ class Users {
         opt = filterByKeys(opt, 'name', '_room')
         this.one(id, (user) => {
             if(user) {
-                user.name = opt.name || user.name
-                user._room = opt._room || user._room
+                user.name = opt.name
+                user._room = opt._room
                 user.save((err) => {
                     if ( typeof cb === 'function' ) {
                         cb(user)
@@ -57,11 +57,26 @@ class Users {
 
     delete(id, cb) {
         this.one(id, (user) => {
+            if(user === null){
+                cb(null)
+                return
+            }
             user.remove((err) => {
                 if ( typeof cb === 'function' ) {
                     cb(user)
                 }
             })
+        })
+    }
+
+    deleteAll(cb) {
+        this.all((users) => {
+            for(let user of users){
+                user.remove()
+            }
+            if ( typeof cb === 'function' ) {
+                cb('done')
+            }
         })
     }
 }

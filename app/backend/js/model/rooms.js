@@ -49,6 +49,10 @@ class Rooms {
 
     delete(id, cb) {
         this.one(id, (room) => {
+            if(room === null){
+                cb(null)
+                return
+            }
             room.remove((err) => {
                 if ( typeof cb === 'function' ) {
                     cb(room)

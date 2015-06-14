@@ -1,116 +1,141 @@
-let express     = require('express'),
-    app         = express(),
-    http        = require('http').Server(app),
-    bodyParser  = require('body-parser'),
-    socketio    = require('socket.io')(http)
+import express      from 'express'
+import bodyParser   from 'body-parser'
+import socketio     from 'socket.io'
+import { Server }   from 'http'
 
-let users       = require('./app/backend/dist/js/controller/users'),
-    rooms       = require('./app/backend/dist/js/controller/rooms'),
-    messages    = require('./app/backend/dist/js/controller/messages')
+import users        from './app/backend/dist/js/controller/users'
+import rooms        from './app/backend/dist/js/controller/rooms'
+import messages     from './app/backend/dist/js/controller/messages'
 
-import Users    from './app/backend/dist/js/model/users'
-import Rooms    from './app/backend/dist/js/model/rooms'
+import Users        from './app/backend/dist/js/model/users'
+import Rooms        from './app/backend/dist/js/model/rooms'
+
+let app             = express(),
+    server          = Server(app),
+    io              = socketio(server)
 
 
-
+// user bodyParser for different content types at posts
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use((req,res,next) => {
-  next()
-})
-
+// set the url of the api
 app.use('/api/users', users)
 app.use('/api/rooms', rooms)
-// app.use('/api/messages', messages)
 
+// make the path to the frontend and to the documentation public
 app.use(express.static(__dirname + '/app/frontend'))
 app.use('/doc', express.static(__dirname + '/docs/annotated-source'))
 
-socketio.on('connection', (socket) => {
-  console.log('a new user connected')
+// save the data of the current User with socket id as key
+let data = {}
 
-  // create new user
+// init models
+let roomModel = new Rooms()
+let userModel = new Users()
 
-  let users = new Users()
-  let rooms = new Rooms()
-
-  let user = {}
-  users.create({_socket: socket.id, name: `User${Date.now()%10000}` }, (result) => {
-      socket.emit('newUser', {id: result.id})
-      user.id = result.id
-      user.name = result.name
-  })
-
-  // delete user
+io.on('connection', (socket) => {
+  console.log(`${socket.client.conn.remoteAddress} has connected`)
 
   socket.on('disconnect', () => {
-    console.log('user disconnected')
-    // todo: implement delete function
-    users.delete(user.id)
-  })
-
-  // add user to chatroom
-  socket.on('addUserToChatroom', (obj) => {
-      sendMessageToRoom(obj.id, {
-        sender: "General",
-        text: `User ${user.name} connected`
-      }, rooms)
-
-      users.update(user.id, { _room: obj.id })
-      
-      rooms.one(obj.id, (room) => {
-        for(let i = 0, length = room.users.length; i < length; i++) {
-          socketio.to(room.users[i]._socket).emit("sendUserlist", room.users.map((item) => { return item["name"] }))
-        }
-      })
-
-      socket.on('getUserlist', () => {
-        rooms.one(obj.id, (room) => {
-          socket.emit("sendUserlist", room.users.map((item) => item.name ))
-        })
-      })
-  })
-
-  // remove user from chatroom
-
-  socket.on('removeUserFromChatroom', (room) => {
-    users.update(user.id, { _room: null }, () => {
-      rooms.one(room.id, (room) => {
-        if(room) {
-          for(let i = 0, length = room.users.length; i < length; i++) {
-            socketio.to(room.users[i]._socket).emit("sendUserlist", room.users.map((item) => { 
-              if(item["name"] !== user.name) {
-                return item["name"] 
-              }
-            }))
-          }
-        }
-      })
-    })
-  })
-
-  // broadcast message to room
-
-  socket.on('sendMessage', (text) => {
-      users.one(user.id, (dbUser) => {
-        sendMessageToRoom(dbUser._room, {
-          sender: dbUser.name,
-          text: text
-        }, rooms)
-      })
-  })
-
-})
-
-http.listen(3000, () => {
-    console.log('listening on *:3000')
-})
-
-function sendMessageToRoom (roomId, message, rooms) {
-  rooms.one(roomId, (room) => {
-    for(let i = 0, length = room.users.length; i < length; i++) {
-      socketio.to(room.users[i]._socket).emit('message', message)
+    console.log(`${socket.client.conn.remoteAddress} has disconnected`)
+    let obj = {}
+    // check if the key and the _id is available
+    if(data[socket.id] && data[socket.id]._id){
+      obj = {
+        roomId: data[socket.id]._room,
+        sender: 'General',
+        text: `${data[socket.id].name} has left the chat`
+      }
+      // init the User model
+      let uModel = new Users()
+      // delete the user from the database
+      uModel.delete(data[socket.id]._id)
+      // send a message to all clients in the same room of the deleted user
+      sendToRoom(obj.roomId, obj, 'chat message')
+      // send the data of the deleted user to all clients 
+      io.sockets.emit("removeUser", { user: data[socket.id] })
+      // remove the entry out of the hash
+      delete data[socket.id]
     }
   })
-}
+
+  socket.on('error', (err) => {
+    console.log(err)
+  })
+
+  // new user created
+  socket.on('newUser', (obj) => {
+    obj.sender = 'General'
+    obj.text = `${obj.user.name} has connected`
+    // save the data of the created user
+    data[socket.id] = obj.user
+    // send a message to all users in the same room
+    sendToRoom(obj.roomId, obj, 'chat message')
+    if(obj.roomId) {
+      // if the roomId is given, emit 'addUserToRoom'
+      io.sockets.emit('addUserToRoom', obj)
+    }
+  })
+
+  // listen on 'sendMessage'
+  socket.on('sendMessage', (data = {}) =>{
+    // send a message to all clients in the given room
+    sendToRoom(data.roomId, data, 'chat message')
+  })
+
+  // listen on deleteRoom
+  socket.on('deleteRoom', (data) => {
+    // emit 'removeRoom' with the data of the room as parameter
+    io.sockets.emit('removeRoom', data)
+  })
+
+  // listen on createRoom
+  socket.on('createRoom', (data) => {
+    // emit 'roomCreated' with the data of the room as parameter
+    io.sockets.emit('roomCreated', data)
+  })
+
+  // listen on 'addUserToChatroom'
+  socket.on('addUserToChatroom', (obj) => {
+    // set the users attributes to the data hash
+    data[socket.id] = obj.user
+    // overwrite the room id
+    data[socket.id]._room = obj.roomId
+    // emit 'userToChatroom' to all clients with the users attributes as parameter
+    io.sockets.emit('userToChatroom', { user: data[socket.id] })
+  })
+
+  // listen on 'removeUserFromChatroom'
+  socket.on('removeUserFromChatroom', (data) => {
+    // set the object to message all clients
+    let obj = {
+      sender: 'General',
+      text: `${data.user.name} has left the chat`
+    }
+    // send the message to all clients in the given users room
+    sendToRoom(data.user._room, obj, 'chat message')
+    // emit 'removeUser' with the users attributes as parameter
+    io.emit("removeUser", { user: data.user })
+  })
+
+  // function to send a message to all clients in the given room
+  let sendToRoom = (roomId, data, action) => {
+    // get the room with the given id
+    roomModel.one(roomId, (room) => {
+      // if it is available
+      if( room ) {
+        // loop through all users
+        for(let user of room.users){
+          // send the message to every user
+          io.to(user._socket).emit(action, data)
+        }
+      }
+    })
+  }
+})
+
+// start the server on port 3000
+server.listen(3000, () => {
+    console.log('listening on *:3000')
+})
