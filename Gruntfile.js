@@ -232,14 +232,6 @@ module.exports = function(grunt) {
       backend: {
         src: ['<%= backend.dist %>/js/**/*.js'],
         dest: '<%= backend.dist %>/main.js'
-      // },
-      // frontendTest: {
-      //   src: ['<%= frontend.dist %>/test/**/*.js'],
-      //   dest: '<%= frontend.dist %>/test.js'
-      // },
-      // backendTest: {
-      //   src: '<%= backend.dist %>/test/**/*.js',
-      //   dest: '<%= backend.dist %>/test.js'
       }
     },
 
@@ -270,25 +262,6 @@ module.exports = function(grunt) {
     clean: {
       backend:  ['<%= backend.dist %>'],
       frontend: ['<%= frontend.dist %>']
-    },
-
-    mochaTest: {
-      test: {
-        options: {
-          reporter: 'spec',
-          quiet: false,
-          clearRequireCache: false
-        },
-        src: ['<%= backend.dist %>/test.js']
-      }
-    },
-
-    mochacli: {
-      options: {
-        reporter: "nyan",
-        ui: "tdd"
-      },
-      all: ['<%= backend.dist %>/test/*.js']
     }
   });
 
