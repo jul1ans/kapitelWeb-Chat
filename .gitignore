@@ -5,6 +5,7 @@
 /app/frontend/public/*
 
 /docs
+/coverage
 
 /app.js
 /app.js.map
