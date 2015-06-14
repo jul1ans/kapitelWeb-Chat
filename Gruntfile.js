@@ -161,30 +161,9 @@ module.exports = function(grunt) {
 
     mocha_istanbul: {
         coverage: {
-            src: 'test', // a folder works nicely 
+            src: '<%= backend.dist %>/test', // a folder works nicely 
             options: {
-                mask: '*.spec.js'
-            }
-        },
-        coverageSpecial: {
-            src: ['testSpecial/*/*.js', 'testUnique/*/*.js'], // specifying file patterns works as well 
-            options: {
-                coverageFolder: 'coverageSpecial',
-                mask: '*.spec.js',
-                mochaOptions: ['--harmony','--async-only'], // any extra options 
-                istanbulOptions: ['--harmony','--handle-sigint']
-            }
-        },
-        coveralls: {
-            src: ['test', 'testSpecial', 'testUnique'], // multiple folders also works 
-            options: {
-                coverage:true, // this will make the grunt.event.on('coverage') event listener to be triggered 
-                check: {
-                    lines: 75,
-                    statements: 75
-                },
-                root: './lib', // define where the cover task should consider the root of libraries that are covered by tests 
-                reportFormats: ['cobertura','lcovonly']
+                mask: '*.js'
             }
         }
     },
@@ -342,7 +321,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build', 'serve', 'watch']);
   grunt.registerTask('build', ['clean', 'babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['concurrent:dev']);
-  grunt.registerTask('test',  ['mochacli', 'mocha_istanbul:coverage']);
+  grunt.registerTask('test',  ['mocha_istanbul:coverage']);
   grunt.registerTask('doc',   ['docco']);
 
   // FRONTEND BUILD TASKS
