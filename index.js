@@ -26,6 +26,7 @@ app.use('/api/rooms', rooms)
 // make the path to the frontend and to the documentation public
 app.use(express.static(__dirname + '/app/frontend'))
 app.use('/doc', express.static(__dirname + '/docs/annotated-source'))
+app.use('/cov', express.static(__dirname + '/coverage'))
 
 // save the data of the current User with socket id as key
 let data = {}

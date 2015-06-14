@@ -82,25 +82,25 @@ module.exports = function(grunt) {
     watch: {
       frontendScript: {
         files: ['<%= frontend.path %>/js/**/*.js'],
-        tasks: ['build:frontend:script', 'jshint', 'test', 'reload'],
+        tasks: ['build:frontend:script', 'jshint', 'mocha_istanbul:frontend', 'reload'],
         options: {
           livereload: true
         }
       },
       frontendTest: {
         files: ['<%= frontend.test %>/**/*.js'],
-        tasks: ['build:frontend:script', 'jshint', 'test']
+        tasks: ['build:frontend:script', 'jshint', 'mocha_istanbul:frontend']
       },
       backendScript: {
         files: ['<%= backend.path %>/js/**/*.js', 'index.js'],
-        tasks: ['build:backend', 'jshint', 'test'],
+        tasks: ['build:backend', 'jshint', 'mocha_istanbul:backend'],
         options: {
           livereload: true
         }
       },
       backendTest: {
         files: ['<%= backend.test %>/**/*.js'],
-        tasks: ['build:backend', 'jshint', 'test']
+        tasks: ['build:backend', 'jshint', 'mocha_istanbul:backend']
       },
       frontendStyle: {
         files: ['<%= frontend.path %>/css/main.scss'],
@@ -160,8 +160,14 @@ module.exports = function(grunt) {
     },
 
     mocha_istanbul: {
-        coverage: {
+        backend: {
             src: '<%= backend.dist %>/test', // a folder works nicely 
+            options: {
+                mask: '*.js'
+            }
+        },
+        frontend: {
+            src: '<%= frontend.dist %>/test', // a folder works nicely 
             options: {
                 mask: '*.js'
             }
@@ -294,7 +300,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build', 'serve', 'watch']);
   grunt.registerTask('build', ['clean', 'babel', 'browserify', 'uglify', 'sass', 'autoprefixer']);
   grunt.registerTask('serve', ['concurrent:dev']);
-  grunt.registerTask('test',  ['mocha_istanbul:coverage']);
+  grunt.registerTask('test',  ['mocha_istanbul']);
   grunt.registerTask('doc',   ['docco']);
 
   // FRONTEND BUILD TASKS
@@ -305,8 +311,5 @@ module.exports = function(grunt) {
 
   // BACKEND BUILD TASKS
   grunt.registerTask('build:backend', ['clean:backend', 'babel:backend', 'browserify:backend']);
-
-  // grunt.registerTask('coveralls', ['mocha_istanbul:coveralls', 'istanbul_check_coverage']);
-  //grunt.registerTask('coverage', ['mocha_istanbul:coverage', 'istanbul_check_coverage']);
 
 };

@@ -48,3 +48,13 @@ This will create a **doc/** folder in your root path. To see the documentation r
 `grunt serve` and browse to **localhost:3000/doc**. On the right upper corner you can switch between
 the files.
 
+## TEST
+Befor test the application you have to run the build prozess with `grunt build`.
+To test the application run
+```
+grunt test
+```
+
+This will show the result of the mocha test and if the server is running you can visit the coverage on
+**localhost:3000/cov/lcov-report/**
+
