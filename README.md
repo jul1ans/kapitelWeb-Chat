@@ -3,6 +3,7 @@
 1. [Setup](#setup)
 2. [API](#api)
 3. [Documentation](#documentation)
+4. [Test](#test)
 
 ## Setup
 
